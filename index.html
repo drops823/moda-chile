@@ -1,0 +1,32 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moda Chile</title><style>
+body{margin:0;background:#202124;color:#fff;font-family:Arial;text-align:center}h1{margin:12px 0 4px}.sub{color:#ddd}
+canvas{background:#eadfce;border:4px solid #fff;max-width:96vw;height:auto}.panel{max-width:900px;margin:10px auto;display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+.card{background:#333;padding:8px;border-radius:8px;min-width:140px}button{padding:7px 10px;margin:4px;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
+</style></head><body><h1>🇨🇱 MODA CHILE</h1><div class="sub">Importás ropa de marcas famosas desde Chile. Los empleados y clientes trabajan automáticamente.</div>
+<canvas id="game" width="850" height="520"></canvas><div id="shop" class="panel"></div><button onclick="restart()">Reiniciar negocio</button>
+<script>
+const c=document.getElementById("game"),x=c.getContext("2d");let money=1500,sales=0,day=1,t=0,cs=[];
+const products=[
+["Nike","👕 Remera",28,10,6],["Adidas","👟 Zapatillas",75,30,4],["Puma","🧥 Campera",65,27,3],["Levi's","👖 Jean",60,25,4],
+["The North Face","🧥 Abrigo",120,55,2],["Vans","👟 Zapatillas",70,29,3],["Converse","👟 Championes",68,28,3],["New Balance","👟 Zapatillas",85,35,2],
+["Tommy Hilfiger","👔 Camisa",80,34,3],["Calvin Klein","👕 Remera",55,22,3],["Jordan","👟 Zapatillas",110,48,2],["Under Armour","🩳 Short",45,18,4],
+["H&M","👚 Top",35,14,5],["Zara","👗 Vestido",75,30,3],["Ray-Ban","🕶️ Lentes",95,40,2],["New Era","🧢 Gorra",40,16,4],
+["Vans","🧢 Gorra",35,14,3],["Levi's","🧦 Medias",25,10,5],["Nike","🩳 Short",42,17,4],["Adidas","🧦 Medias",25,10,5]
+].map((a,i)=>({id:i,brand:a[0],name:a[1],sell:a[2],cost:a[3],stock:a[4]}));
+const es=[{x:140,y:410,tx:140,ty:410,s:.7,col:"#4a86e8",n:"Lucas",r:"Depósito",e:"📦"},
+{x:420,y:410,tx:420,ty:410,s:.65,col:"#e06666",n:"Sofi",r:"Vendedora",e:"👕"},{x:700,y:410,tx:700,ty:410,s:.7,col:"#6aa84f",n:"Mateo",r:"Caja",e:"💵"}];
+function add(){cs.push({x:Math.random()<.5?20:830,y:120+Math.random()*300,tx:100+Math.random()*650,ty:110+Math.random()*280,s:.6+Math.random()*.5,p:Math.floor(Math.random()*products.length),st:0})}
+function move(o){let dx=o.tx-o.x,dy=o.ty-o.y,d=Math.hypot(dx,dy);if(d>2){o.x+=dx/d*o.s;o.y+=dy/d*o.s}else{o.tx=80+Math.random()*690;o.ty=100+Math.random()*300}}
+function update(){t++;if(t%55===0)add();for(const q of cs){if(q.st===0){move(q);if(Math.random()<.004){let p=products[q.p];if(p.stock>0){p.stock--;money+=p.sell;sales++;q.st=1;q.tx=q.x<425?880:-30}}}else q.x+=(q.tx-q.x)*.02}cs=cs.filter(q=>q.x>-50&&q.x<900);es.forEach(move);if(t%1800===0)day++}
+function person(o){x.fillStyle=o.col;x.fillRect(o.x-13,o.y,26,25);x.fillStyle="#f4cccc";x.beginPath();x.arc(o.x,o.y-12,12,0,7);x.fill();x.fillStyle="#111";x.fillRect(o.x-6,o.y-15,3,3);x.fillRect(o.x+3,o.y-15,3,3);x.fillStyle="#333";x.fillRect(o.x-9,o.y+25,6,11);x.fillRect(o.x+3,o.y+25,6,11);x.font="18px Arial";x.fillText(o.e,o.x-9,o.y-22)}
+function draw(){x.clearRect(0,0,850,520);x.fillStyle="#d9c2a6";x.fillRect(0,0,850,520);x.fillStyle="#5b3a29";x.fillRect(0,0,850,58);
+x.fillStyle="#fff";x.font="bold 22px Arial";x.fillText("🇨🇱 Moda Chile",18,37);x.font="17px Arial";x.fillText("💰 $"+money+"   🛍️ Ventas: "+sales+"   📅 Día "+day,330,37);
+x.fillStyle="#fff";x.fillRect(30,75,250,305);x.fillRect(300,75,250,305);x.fillRect(570,75,250,305);x.fillStyle="#444";x.font="bold 18px Arial";x.fillText("👕 ROPA",115,103);x.fillText("👟 CALZADO",370,103);x.fillText("🧢 ACCESORIOS",625,103);
+x.font="30px Arial";["👕","👔","👖","🧥","👚","👗","🩳"].forEach((v,i)=>x.fillText(v,55+(i%5)*42,155+Math.floor(i/5)*48));["👟","👞","👢"].forEach((v,i)=>x.fillText(v,325+(i%3)*55,155));["🧢","🕶️","👜","🧦"].forEach((v,i)=>x.fillText(v,595+(i%4)*50,155));
+cs.forEach(q=>person({x:q.x,y:q.y,col:"#f1c232",e:"🛍️"}));es.forEach(person);x.fillStyle="#222";x.font="13px Arial";es.forEach(e=>x.fillText(e.n+" - "+e.r,e.x-48,e.y+52));
+x.fillStyle="#aaa";x.fillRect(280,430,290,48);x.fillStyle="#222";x.font="18px Arial";x.fillText("🚚 MERCADERÍA DESDE CHILE 🇨🇱",305,460)}
+function render(){let s="";products.forEach((p,i)=>s+=`<div class="card"><b>${p.brand}</b><br>${p.name}<br>Stock: ${p.stock}<br>Compra: $${p.cost} | Venta: $${p.sell}<br><button onclick="buy(${i},1)">+1</button><button onclick="buy(${i},5)">+5</button></div>`);document.getElementById("shop").innerHTML=s}
+function buy(i,n){let p=products[i],z=p.cost*n;if(money>=z){money-=z;p.stock+=n;render()}else alert("No tenés suficiente dinero.")}
+function restart(){money=1500;sales=0;day=1;t=0;cs=[];let st=[6,4,3,4,2,3,3,2,3,3,2,4,5,3,2,4,3,5,4,5];products.forEach((p,i)=>p.stock=st[i]);for(let i=0;i<5;i++)add();render()}function loop(){update();draw();render();requestAnimationFrame(loop)}restart();loop();
+</script></body></html>
